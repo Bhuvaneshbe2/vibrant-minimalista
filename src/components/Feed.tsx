@@ -63,8 +63,25 @@ const Feed: React.FC = () => {
   };
 
   const handleShare = (postId: string, platform: string) => {
-    // Here you would implement the actual sharing logic
-    toast.info(`Sharing post ${postId} on ${platform}`);
+    switch (platform) {
+      case 'WhatsApp':
+        window.open(`https://wa.me/?text=Check out this post: ${window.location.origin}/post/${postId}`, '_blank');
+        break;
+      case 'Instagram':
+        // Instagram doesn't support direct sharing, so we'll copy the link to clipboard
+        navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
+        toast.success('Link copied to clipboard. You can now share it on Instagram.');
+        break;
+      case 'Facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/post/${postId}`)}`, '_blank');
+        break;
+      case 'Message':
+        // Redirect to a hypothetical messages page
+        window.location.href = '/messages';
+        break;
+      default:
+        toast.info(`Sharing post ${postId} on ${platform}`);
+    }
   };
 
   const handleAddToStory = (postId: string) => {
@@ -130,6 +147,9 @@ const Feed: React.FC = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleShare(post.id, 'Facebook')}>
                   Facebook
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShare(post.id, 'Message')}>
+                  Message
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleShare(post.id, 'More')}>
                   More options
