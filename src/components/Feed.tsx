@@ -9,22 +9,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-type PostType = 'video' | 'photo' | 'story';
-
-interface Post {
-  id: string;
-  type: PostType;
-  content: string;
-  likes: number;
-  comments: number;
-  author: string;
-  followers: number;
-}
+import { Post } from '../types/post';
+import * as postActions from '../utils/postActions';
 
 const Feed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [filter, setFilter] = useState<PostType | 'all'>('all');
+  const [filter, setFilter] = useState<Post['type'] | 'all'>('all');
   const [comment, setComment] = useState('');
   const [showCommentInput, setShowCommentInput] = useState<string | null>(null);
 
@@ -43,13 +33,6 @@ const Feed: React.FC = () => {
     fetchPosts();
   }, []);
 
-  const handleLike = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId ? { ...post, likes: post.likes + 1 } : post
-    ));
-    toast.success('Post liked!');
-  };
-
   const handleComment = (postId: string) => {
     setShowCommentInput(postId);
   };
@@ -65,74 +48,8 @@ const Feed: React.FC = () => {
     }
   };
 
-  const handleShare = (postId: string, platform: string) => {
-    switch (platform) {
-      case 'WhatsApp':
-        window.open(`https://wa.me/?text=Check out this post: ${window.location.origin}/post/${postId}`, '_blank');
-        break;
-      case 'Instagram':
-        navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
-        toast.success('Link copied to clipboard. You can now share it on Instagram.');
-        break;
-      case 'Facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/post/${postId}`)}`, '_blank');
-        break;
-      case 'Message':
-        window.location.href = '/messages';
-        break;
-      default:
-        toast.info(`Sharing post ${postId} on ${platform}`);
-    }
-  };
-
-  const handleAddToStory = (postId: string) => {
-    toast.success(`Added post ${postId} to your story!`);
-  };
-
   const handleUploadMedia = () => {
     toast.info('Media upload feature coming soon!');
-  };
-
-  const handleFollow = (postId: string) => {
-    setPosts(posts.map(post =>
-      post.id === postId ? { ...post, followers: post.followers + 1 } : post
-    ));
-    toast.success('Followed successfully!');
-  };
-
-  const handleViewComments = (postId: string) => {
-    const post = posts.find(p => p.id === postId);
-    if (post) {
-      toast.info(`Viewing ${post.comments} comments for post ${postId}`);
-    }
-  };
-
-  const handleVoiceMessage = () => {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(() => {
-        toast.success('Microphone enabled. You can now record a voice message.');
-      })
-      .catch(() => {
-        toast.error('Unable to access the microphone. Please check your permissions.');
-      });
-  };
-
-  const handleCall = () => {
-    if ('contacts' in navigator && 'select' in navigator.contacts) {
-      navigator.contacts.select(['tel'])
-        .then(contacts => {
-          if (contacts.length > 0 && contacts[0].tel && contacts[0].tel.length > 0) {
-            toast.success(`Calling ${contacts[0].tel[0]}`);
-          } else {
-            toast.error('No contact selected or no phone number available.');
-          }
-        })
-        .catch(() => {
-          toast.error('Unable to access contacts. Please check your permissions.');
-        });
-    } else {
-      toast.error('Contacts API not supported in this browser.');
-    }
   };
 
   const filteredPosts = filter === 'all' ? posts : posts.filter(post => post.type === filter);
@@ -143,7 +60,7 @@ const Feed: React.FC = () => {
         <select 
           className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm"
           value={filter}
-          onChange={(e) => setFilter(e.target.value as PostType | 'all')}
+          onChange={(e) => setFilter(e.target.value as Post['type'] | 'all')}
         >
           <option value="all">All Posts</option>
           <option value="video">Videos</option>
@@ -167,12 +84,12 @@ const Feed: React.FC = () => {
             <p className="mb-4">{post.content}</p>
           )}
           <div className="flex justify-between items-center">
-            <button onClick={() => handleLike(post.id)} className="flex items-center text-gray-600 hover:text-red-500">
+            <Button variant="ghost" onClick={() => postActions.handleLike(posts, post.id, setPosts)} className="flex items-center text-gray-600 hover:text-red-500">
               <Heart size={20} className="mr-1" /> {post.likes}
-            </button>
-            <button onClick={() => handleComment(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
+            </Button>
+            <Button variant="ghost" onClick={() => handleComment(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
               <MessageCircle size={20} className="mr-1" /> {post.comments}
-            </button>
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center text-gray-600 hover:text-green-500">
@@ -180,36 +97,36 @@ const Feed: React.FC = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handleShare(post.id, 'WhatsApp')}>
+                <DropdownMenuItem onClick={() => postActions.handleShare(post.id, 'WhatsApp')}>
                   WhatsApp
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleShare(post.id, 'Instagram')}>
+                <DropdownMenuItem onClick={() => postActions.handleShare(post.id, 'Instagram')}>
                   Instagram
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleShare(post.id, 'Facebook')}>
+                <DropdownMenuItem onClick={() => postActions.handleShare(post.id, 'Facebook')}>
                   Facebook
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleShare(post.id, 'Message')}>
+                <DropdownMenuItem onClick={() => postActions.handleShare(post.id, 'Message')}>
                   Message
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleShare(post.id, 'More')}>
+                <DropdownMenuItem onClick={() => postActions.handleShare(post.id, 'More')}>
                   More options
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="ghost" onClick={() => handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
+            <Button variant="ghost" onClick={() => postActions.handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
               <Plus size={20} className="mr-1" /> Add to Story
             </Button>
-            <Button variant="ghost" onClick={() => handleFollow(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
+            <Button variant="ghost" onClick={() => postActions.handleFollow(posts, post.id, setPosts)} className="flex items-center text-gray-600 hover:text-blue-500">
               <UserPlus size={20} className="mr-1" /> Follow ({post.followers})
             </Button>
-            <Button variant="ghost" onClick={() => handleViewComments(post.id)} className="flex items-center text-gray-600 hover:text-yellow-500">
+            <Button variant="ghost" onClick={() => postActions.handleViewComments(posts, post.id)} className="flex items-center text-gray-600 hover:text-yellow-500">
               <MessageCircle size={20} className="mr-1" /> View Comments
             </Button>
-            <Button variant="ghost" onClick={handleVoiceMessage} className="flex items-center text-gray-600 hover:text-green-500">
+            <Button variant="ghost" onClick={postActions.handleVoiceMessage} className="flex items-center text-gray-600 hover:text-green-500">
               <Mic size={20} className="mr-1" /> Voice Message
             </Button>
-            <Button variant="ghost" onClick={handleCall} className="flex items-center text-gray-600 hover:text-purple-500">
+            <Button variant="ghost" onClick={postActions.handleCall} className="flex items-center text-gray-600 hover:text-purple-500">
               <Phone size={20} className="mr-1" /> Call
             </Button>
           </div>
