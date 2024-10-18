@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Filter } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Filter, Upload, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 type PostType = 'video' | 'photo' | 'story';
 
@@ -16,6 +24,8 @@ interface Post {
 const Feed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [filter, setFilter] = useState<PostType | 'all'>('all');
+  const [comment, setComment] = useState('');
+  const [showCommentInput, setShowCommentInput] = useState<string | null>(null);
 
   useEffect(() => {
     // Simulating fetching posts from an API
@@ -40,18 +50,38 @@ const Feed: React.FC = () => {
   };
 
   const handleComment = (postId: string) => {
-    toast.info('Comment feature coming soon!');
+    setShowCommentInput(postId);
   };
 
-  const handleShare = (postId: string) => {
-    toast.info('Share feature coming soon!');
+  const submitComment = (postId: string) => {
+    if (comment.trim()) {
+      // Here you would typically send the comment to your backend
+      toast.success('Comment added successfully!');
+      setComment('');
+      setShowCommentInput(null);
+    }
+  };
+
+  const handleShare = (postId: string, platform: string) => {
+    // Here you would implement the actual sharing logic
+    toast.info(`Sharing post ${postId} on ${platform}`);
+  };
+
+  const handleAddToStory = (postId: string) => {
+    // Here you would implement the logic to add the post to a story
+    toast.success(`Added post ${postId} to your story!`);
+  };
+
+  const handleUploadMedia = () => {
+    // Here you would implement the media upload logic
+    toast.info('Media upload feature coming soon!');
   };
 
   const filteredPosts = filter === 'all' ? posts : posts.filter(post => post.type === filter);
 
   return (
     <div className="max-w-2xl mx-auto mt-8">
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex justify-between items-center">
         <select 
           className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm"
           value={filter}
@@ -62,6 +92,9 @@ const Feed: React.FC = () => {
           <option value="photo">Photos</option>
           <option value="story">Stories</option>
         </select>
+        <Button onClick={handleUploadMedia} className="flex items-center">
+          <Upload size={20} className="mr-2" /> Upload Media
+        </Button>
       </div>
       {filteredPosts.map(post => (
         <div key={post.id} className="bg-white rounded-lg shadow-md mb-6 p-4">
@@ -82,10 +115,43 @@ const Feed: React.FC = () => {
             <button onClick={() => handleComment(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
               <MessageCircle size={20} className="mr-1" /> {post.comments}
             </button>
-            <button onClick={() => handleShare(post.id)} className="flex items-center text-gray-600 hover:text-green-500">
-              <Share2 size={20} className="mr-1" /> Share
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center text-gray-600 hover:text-green-500">
+                  <Share2 size={20} className="mr-1" /> Share
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleShare(post.id, 'WhatsApp')}>
+                  WhatsApp
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShare(post.id, 'Instagram')}>
+                  Instagram
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShare(post.id, 'Facebook')}>
+                  Facebook
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShare(post.id, 'More')}>
+                  More options
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="ghost" onClick={() => handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
+              <Plus size={20} className="mr-1" /> Add to Story
+            </Button>
           </div>
+          {showCommentInput === post.id && (
+            <div className="mt-4 flex">
+              <Input
+                type="text"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Write your comment..."
+                className="flex-grow mr-2"
+              />
+              <Button onClick={() => submitComment(post.id)}>Submit</Button>
+            </div>
+          )}
         </div>
       ))}
     </div>
