@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Trending, User } from 'lucide-react';
+import { Search, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Explore: React.FC = () => {
