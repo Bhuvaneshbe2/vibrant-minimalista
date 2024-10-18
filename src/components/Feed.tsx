@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Filter, Upload, Plus } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Filter, Upload, Plus, UserPlus, Mic, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ interface Post {
   likes: number;
   comments: number;
   author: string;
+  followers: number;
 }
 
 const Feed: React.FC = () => {
@@ -31,10 +32,10 @@ const Feed: React.FC = () => {
     // Simulating fetching posts from an API
     const fetchPosts = () => {
       const mockPosts: Post[] = [
-        { id: '1', type: 'photo', content: 'https://picsum.photos/seed/1/400/300', likes: 15, comments: 3, author: 'User1' },
-        { id: '2', type: 'video', content: 'https://www.example.com/video1.mp4', likes: 25, comments: 7, author: 'User2' },
-        { id: '3', type: 'story', content: 'This is a story post content', likes: 10, comments: 2, author: 'User3' },
-        { id: '4', type: 'photo', content: 'https://picsum.photos/seed/2/400/300', likes: 30, comments: 5, author: 'User4' },
+        { id: '1', type: 'photo', content: 'https://picsum.photos/seed/1/400/300', likes: 15, comments: 3, author: 'User1', followers: 100 },
+        { id: '2', type: 'video', content: 'https://www.example.com/video1.mp4', likes: 25, comments: 7, author: 'User2', followers: 200 },
+        { id: '3', type: 'story', content: 'This is a story post content', likes: 10, comments: 2, author: 'User3', followers: 150 },
+        { id: '4', type: 'photo', content: 'https://picsum.photos/seed/2/400/300', likes: 30, comments: 5, author: 'User4', followers: 300 },
       ];
       setPosts(mockPosts);
     };
@@ -55,7 +56,9 @@ const Feed: React.FC = () => {
 
   const submitComment = (postId: string) => {
     if (comment.trim()) {
-      // Here you would typically send the comment to your backend
+      setPosts(posts.map(post =>
+        post.id === postId ? { ...post, comments: post.comments + 1 } : post
+      ));
       toast.success('Comment added successfully!');
       setComment('');
       setShowCommentInput(null);
@@ -68,7 +71,6 @@ const Feed: React.FC = () => {
         window.open(`https://wa.me/?text=Check out this post: ${window.location.origin}/post/${postId}`, '_blank');
         break;
       case 'Instagram':
-        // Instagram doesn't support direct sharing, so we'll copy the link to clipboard
         navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
         toast.success('Link copied to clipboard. You can now share it on Instagram.');
         break;
@@ -76,7 +78,6 @@ const Feed: React.FC = () => {
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/post/${postId}`)}`, '_blank');
         break;
       case 'Message':
-        // Redirect to a hypothetical messages page
         window.location.href = '/messages';
         break;
       default:
@@ -85,13 +86,53 @@ const Feed: React.FC = () => {
   };
 
   const handleAddToStory = (postId: string) => {
-    // Here you would implement the logic to add the post to a story
     toast.success(`Added post ${postId} to your story!`);
   };
 
   const handleUploadMedia = () => {
-    // Here you would implement the media upload logic
     toast.info('Media upload feature coming soon!');
+  };
+
+  const handleFollow = (postId: string) => {
+    setPosts(posts.map(post =>
+      post.id === postId ? { ...post, followers: post.followers + 1 } : post
+    ));
+    toast.success('Followed successfully!');
+  };
+
+  const handleViewComments = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      toast.info(`Viewing ${post.comments} comments for post ${postId}`);
+    }
+  };
+
+  const handleVoiceMessage = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => {
+        toast.success('Microphone enabled. You can now record a voice message.');
+      })
+      .catch(() => {
+        toast.error('Unable to access the microphone. Please check your permissions.');
+      });
+  };
+
+  const handleCall = () => {
+    if ('contacts' in navigator && 'select' in navigator.contacts) {
+      navigator.contacts.select(['tel'])
+        .then(contacts => {
+          if (contacts.length > 0 && contacts[0].tel && contacts[0].tel.length > 0) {
+            toast.success(`Calling ${contacts[0].tel[0]}`);
+          } else {
+            toast.error('No contact selected or no phone number available.');
+          }
+        })
+        .catch(() => {
+          toast.error('Unable to access contacts. Please check your permissions.');
+        });
+    } else {
+      toast.error('Contacts API not supported in this browser.');
+    }
   };
 
   const filteredPosts = filter === 'all' ? posts : posts.filter(post => post.type === filter);
@@ -158,6 +199,18 @@ const Feed: React.FC = () => {
             </DropdownMenu>
             <Button variant="ghost" onClick={() => handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
               <Plus size={20} className="mr-1" /> Add to Story
+            </Button>
+            <Button variant="ghost" onClick={() => handleFollow(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
+              <UserPlus size={20} className="mr-1" /> Follow ({post.followers})
+            </Button>
+            <Button variant="ghost" onClick={() => handleViewComments(post.id)} className="flex items-center text-gray-600 hover:text-yellow-500">
+              <MessageCircle size={20} className="mr-1" /> View Comments
+            </Button>
+            <Button variant="ghost" onClick={handleVoiceMessage} className="flex items-center text-gray-600 hover:text-green-500">
+              <Mic size={20} className="mr-1" /> Voice Message
+            </Button>
+            <Button variant="ghost" onClick={handleCall} className="flex items-center text-gray-600 hover:text-purple-500">
+              <Phone size={20} className="mr-1" /> Call
             </Button>
           </div>
           {showCommentInput === post.id && (
