@@ -22,10 +22,10 @@ const Feed: React.FC = () => {
     // Simulating fetching posts from an API
     const fetchPosts = () => {
       const mockPosts: Post[] = [
-        { id: '1', type: 'photo', content: 'https://picsum.photos/seed/1/400/300', likes: 15, comments: 3, author: 'User1', followers: 100 },
-        { id: '2', type: 'video', content: 'https://www.example.com/video1.mp4', likes: 25, comments: 7, author: 'User2', followers: 200 },
-        { id: '3', type: 'story', content: 'This is a story post content', likes: 10, comments: 2, author: 'User3', followers: 150 },
-        { id: '4', type: 'photo', content: 'https://picsum.photos/seed/2/400/300', likes: 30, comments: 5, author: 'User4', followers: 300 },
+        { id: '1', type: 'photo', content: 'https://picsum.photos/seed/1/400/300', likes: 15, comments: 3, author: 'User1', followers: 100, isFollowed: false },
+        { id: '2', type: 'video', content: 'https://www.example.com/video1.mp4', likes: 25, comments: 7, author: 'User2', followers: 200, isFollowed: false },
+        { id: '3', type: 'story', content: 'This is a story post content', likes: 10, comments: 2, author: 'User3', followers: 150, isFollowed: false },
+        { id: '4', type: 'photo', content: 'https://picsum.photos/seed/2/400/300', likes: 30, comments: 5, author: 'User4', followers: 300, isFollowed: false },
       ];
       setPosts(mockPosts);
     };
@@ -74,6 +74,17 @@ const Feed: React.FC = () => {
       {filteredPosts.map(post => (
         <div key={post.id} className="bg-white rounded-lg shadow-md mb-6 p-4">
           <div className="mb-2 font-semibold">{post.author}</div>
+          <div className="flex justify-between items-center mb-2">
+            <Button variant="ghost" onClick={() => postActions.handleFollow(posts, post.id, setPosts)} className={`flex items-center ${post.isFollowed ? 'text-blue-500' : 'text-gray-600'} hover:text-blue-500`}>
+              <UserPlus size={20} className="mr-1" /> {post.isFollowed ? 'Following' : 'Follow'} ({post.followers})
+            </Button>
+            <Button variant="ghost" onClick={() => postActions.handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
+              <Plus size={20} className="mr-1" /> Add to Story
+            </Button>
+            <Button variant="ghost" onClick={postActions.handleCall} className="flex items-center text-gray-600 hover:text-green-500">
+              <Phone size={20} className="mr-1" /> Call
+            </Button>
+          </div>
           {post.type === 'photo' && (
             <img src={post.content} alt="Post content" className="w-full rounded-md mb-4" />
           )}
@@ -114,21 +125,6 @@ const Feed: React.FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="ghost" onClick={() => postActions.handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
-              <Plus size={20} className="mr-1" /> Add to Story
-            </Button>
-            <Button variant="ghost" onClick={() => postActions.handleFollow(posts, post.id, setPosts)} className="flex items-center text-gray-600 hover:text-blue-500">
-              <UserPlus size={20} className="mr-1" /> Follow ({post.followers})
-            </Button>
-            <Button variant="ghost" onClick={() => postActions.handleViewComments(posts, post.id)} className="flex items-center text-gray-600 hover:text-yellow-500">
-              <MessageCircle size={20} className="mr-1" /> View Comments
-            </Button>
-            <Button variant="ghost" onClick={postActions.handleVoiceMessage} className="flex items-center text-gray-600 hover:text-green-500">
-              <Mic size={20} className="mr-1" /> Voice Message
-            </Button>
-            <Button variant="ghost" onClick={postActions.handleCall} className="flex items-center text-gray-600 hover:text-purple-500">
-              <Phone size={20} className="mr-1" /> Call
-            </Button>
           </div>
           {showCommentInput === post.id && (
             <div className="mt-4 flex">

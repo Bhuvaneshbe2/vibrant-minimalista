@@ -6,6 +6,7 @@ export interface Post {
   comments: number;
   author: string;
   followers: number;
+  isFollowed: boolean;
 }
 
 export const getIcon = (type: Post['type']) => {

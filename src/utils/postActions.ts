@@ -34,9 +34,9 @@ export const handleAddToStory = (postId: string) => {
 
 export const handleFollow = (posts: Post[], postId: string, setPosts: React.Dispatch<React.SetStateAction<Post[]>>) => {
   setPosts(posts.map(post =>
-    post.id === postId ? { ...post, followers: post.followers + 1 } : post
+    post.id === postId ? { ...post, followers: post.followers + (post.isFollowed ? -1 : 1), isFollowed: !post.isFollowed } : post
   ));
-  toast.success('Followed successfully!');
+  toast.success(posts.find(p => p.id === postId)?.isFollowed ? 'Unfollowed successfully!' : 'Followed successfully!');
 };
 
 export const handleViewComments = (posts: Post[], postId: string) => {
