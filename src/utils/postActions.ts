@@ -57,9 +57,9 @@ export const handleVoiceMessage = () => {
 };
 
 export const handleCall = () => {
-  if ('contacts' in navigator && 'select' in navigator.contacts) {
+  if ('contacts' in navigator && navigator.contacts?.select) {
     navigator.contacts.select(['tel'])
-      .then(contacts => {
+      .then((contacts: Contact[]) => {
         if (contacts.length > 0 && contacts[0].tel && contacts[0].tel.length > 0) {
           toast.success(`Calling ${contacts[0].tel[0]}`);
         } else {
