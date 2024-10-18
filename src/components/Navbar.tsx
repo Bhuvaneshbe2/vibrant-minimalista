@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User, MessageCircle } from 'lucide-react';
+import { Menu, X, User, MessageCircle, Compass, Bell } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Navbar: React.FC = () => {
@@ -26,15 +26,21 @@ const Navbar: React.FC = () => {
               {isAuthenticated ? (
                 <>
                   <Link to="/" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-                  <Link to="/about" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">About</Link>
-                  <Link to="/contact" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Contact</Link>
+                  <Link to="/explore" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    <Compass className="inline-block mr-1" size={16} />
+                    Explore
+                  </Link>
+                  <Link to="/notifications" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    <Bell className="inline-block mr-1" size={16} />
+                    Notifications
+                  </Link>
+                  <Link to="/messages" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    <MessageCircle className="inline-block mr-1" size={16} />
+                    Messages
+                  </Link>
                   <Link to="/profile" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                     <User className="inline-block mr-1" size={16} />
                     Profile
-                  </Link>
-                  <Link to="/" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                    <MessageCircle className="inline-block mr-1" size={16} />
-                    Messages
                   </Link>
                   <button onClick={handleLogout} className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
                 </>
@@ -62,15 +68,21 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <Link to="/" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Home</Link>
-                <Link to="/about" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">About</Link>
-                <Link to="/contact" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Contact</Link>
+                <Link to="/explore" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
+                  <Compass className="inline-block mr-1" size={16} />
+                  Explore
+                </Link>
+                <Link to="/notifications" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
+                  <Bell className="inline-block mr-1" size={16} />
+                  Notifications
+                </Link>
+                <Link to="/messages" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
+                  <MessageCircle className="inline-block mr-1" size={16} />
+                  Messages
+                </Link>
                 <Link to="/profile" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
                   <User className="inline-block mr-1" size={16} />
                   Profile
-                </Link>
-                <Link to="/" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
-                  <MessageCircle className="inline-block mr-1" size={16} />
-                  Messages
                 </Link>
                 <button onClick={handleLogout} className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium w-full text-left">Logout</button>
               </>
