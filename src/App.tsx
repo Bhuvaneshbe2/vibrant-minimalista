@@ -12,6 +12,9 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import StoryPage from './components/StoryPage';
 import FollowersList from './components/FollowersList';
+import StoriesPage from './pages/StoriesPage';
+import MessagesPage from './pages/MessagesPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 const App: React.FC = () => {
   return (
@@ -30,6 +33,9 @@ const App: React.FC = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/story" element={<StoryPage />} />
               <Route path="/followers" element={<FollowersList />} />
+              <Route path="/stories" element={<StoriesPage />} />
+              <Route path="/messages" element={<MessagesPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
             </Route>
           </Routes>
         </main>

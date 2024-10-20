@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User, MessageCircle, Compass, Bell } from 'lucide-react';
+import { Menu, X, User, MessageCircle, Compass, Bell, Film } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Navbar: React.FC = () => {
@@ -29,6 +29,10 @@ const Navbar: React.FC = () => {
                   <Link to="/explore" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                     <Compass className="inline-block mr-1" size={16} />
                     Explore
+                  </Link>
+                  <Link to="/stories" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    <Film className="inline-block mr-1" size={16} />
+                    Stories
                   </Link>
                   <Link to="/notifications" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                     <Bell className="inline-block mr-1" size={16} />
@@ -71,6 +75,10 @@ const Navbar: React.FC = () => {
                 <Link to="/explore" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
                   <Compass className="inline-block mr-1" size={16} />
                   Explore
+                </Link>
+                <Link to="/stories" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
+                  <Film className="inline-block mr-1" size={16} />
+                  Stories
                 </Link>
                 <Link to="/notifications" className="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">
                   <Bell className="inline-block mr-1" size={16} />
