@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Filter, Upload, Plus, UserPlus, Mic, Phone } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Upload, Plus, UserPlus, Phone } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ const Feed: React.FC = () => {
   const [filter, setFilter] = useState<Post['type'] | 'all'>('all');
   const [comment, setComment] = useState('');
   const [showCommentInput, setShowCommentInput] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Simulating fetching posts from an API
@@ -52,6 +54,43 @@ const Feed: React.FC = () => {
     toast.info('Media upload feature coming soon!');
   };
 
+  const handleAddToStory = (postId: string) => {
+    navigate('/story');
+  };
+
+  const handleCall = () => {
+    navigate('/followers');
+  };
+
+  const renderVideoContent = (content: string) => {
+    if (content.includes('youtube.com') || content.includes('youtu.be')) {
+      return (
+        <iframe
+          width="100%"
+          height="315"
+          src={`https://www.youtube.com/embed/${content.split('v=')[1]}`}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      );
+    } else if (content.includes('instagram.com')) {
+      return (
+        <iframe
+          width="100%"
+          height="315"
+          src={`${content}embed`}
+          frameBorder="0"
+          allowFullScreen
+        ></iframe>
+      );
+    } else {
+      return (
+        <video src={content} controls className="w-full rounded-md mb-4" />
+      );
+    }
+  };
+
   const filteredPosts = filter === 'all' ? posts : posts.filter(post => post.type === filter);
 
   return (
@@ -78,19 +117,17 @@ const Feed: React.FC = () => {
             <Button variant="ghost" onClick={() => postActions.handleFollow(posts, post.id, setPosts)} className={`flex items-center ${post.isFollowed ? 'text-blue-500' : 'text-gray-600'} hover:text-blue-500`}>
               <UserPlus size={20} className="mr-1" /> {post.isFollowed ? 'Following' : 'Follow'} ({post.followers})
             </Button>
-            <Button variant="ghost" onClick={() => postActions.handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
+            <Button variant="ghost" onClick={() => handleAddToStory(post.id)} className="flex items-center text-gray-600 hover:text-purple-500">
               <Plus size={20} className="mr-1" /> Add to Story
             </Button>
-            <Button variant="ghost" onClick={postActions.handleCall} className="flex items-center text-gray-600 hover:text-green-500">
+            <Button variant="ghost" onClick={handleCall} className="flex items-center text-gray-600 hover:text-green-500">
               <Phone size={20} className="mr-1" /> Call
             </Button>
           </div>
           {post.type === 'photo' && (
             <img src={post.content} alt="Post content" className="w-full rounded-md mb-4" />
           )}
-          {post.type === 'video' && (
-            <video src={post.content} controls className="w-full rounded-md mb-4" />
-          )}
+          {post.type === 'video' && renderVideoContent(post.content)}
           {post.type === 'story' && (
             <p className="mb-4">{post.content}</p>
           )}

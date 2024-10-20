@@ -10,6 +10,8 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import StoryPage from './components/StoryPage';
+import FollowersList from './components/FollowersList';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +28,8 @@ const App: React.FC = () => {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/story" element={<StoryPage />} />
+              <Route path="/followers" element={<FollowersList />} />
             </Route>
           </Routes>
         </main>
