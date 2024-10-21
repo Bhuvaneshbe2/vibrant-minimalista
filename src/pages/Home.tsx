@@ -2,11 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Feed from '../components/Feed';
 import Messages from '../components/Messages';
-import MediaUpload from '../components/MediaUpload';
 import Explore from '../components/Explore';
 import Notifications from '../components/Notifications';
 import Updates from '../components/Updates';
-import SearchPosting from '../components/SearchPosting';
 import { MessageCircle, Bell, Compass, BookOpen, Film } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { toast } from 'sonner'
@@ -29,11 +27,9 @@ const Home: React.FC = () => {
         <CircularIcon icon={Bell} label="Notifications" onClick={() => handleNavigation('/notifications')} />
         <CircularIcon icon={Compass} label="Explore" onClick={() => handleNavigation('/explore')} />
       </div>
-      <SearchPosting />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div>
           <Updates />
-          <MediaUpload />
         </div>
         <div>
           <Feed />
