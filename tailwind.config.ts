@@ -25,32 +25,32 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "hsl(270, 50%, 40%)",
+          foreground: "hsl(0, 0%, 100%)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "hsl(280, 60%, 50%)",
+          foreground: "hsl(0, 0%, 100%)",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "hsl(0, 100%, 50%)",
+          foreground: "hsl(0, 0%, 100%)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "hsl(270, 20%, 80%)",
+          foreground: "hsl(270, 50%, 20%)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "hsl(290, 70%, 60%)",
+          foreground: "hsl(0, 0%, 100%)",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "hsl(0, 0%, 100%)",
+          foreground: "hsl(270, 50%, 20%)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "hsl(0, 0%, 100%)",
+          foreground: "hsl(270, 50%, 20%)",
         },
       },
       borderRadius: {

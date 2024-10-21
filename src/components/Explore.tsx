@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Search, TrendingUp, User } from 'lucide-react';
+import { Search, TrendingUp, User, Circle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from "@/components/ui/button"
 
 const Explore: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,8 +20,8 @@ const Explore: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Explore</h2>
+    <div className="max-w-2xl mx-auto mt-8 bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold mb-4 text-primary">Explore</h2>
       <form onSubmit={handleSearch} className="mb-6">
         <div className="flex items-center border rounded-md overflow-hidden">
           <input
@@ -30,39 +31,41 @@ const Explore: React.FC = () => {
             placeholder="Search users, hashtags, or keywords"
             className="flex-grow px-4 py-2 focus:outline-none"
           />
-          <button type="submit" className="bg-indigo-600 text-white px-4 py-2">
+          <button type="submit" className="bg-primary text-white px-4 py-2">
             <Search className="h-5 w-5" />
           </button>
         </div>
       </form>
       <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Trending Topics</h3>
+        <h3 className="text-xl font-semibold mb-2 text-secondary">Trending Topics</h3>
         <div className="flex flex-wrap gap-2">
           {trendingTopics.map((topic) => (
-            <span key={topic} className="bg-gray-200 px-3 py-1 rounded-full text-sm">
+            <span key={topic} className="bg-accent text-white px-3 py-1 rounded-full text-sm">
               {topic}
             </span>
           ))}
         </div>
       </div>
       <div>
-        <h3 className="text-xl font-semibold mb-2">Suggested Profiles</h3>
+        <h3 className="text-xl font-semibold mb-2 text-secondary">Suggested Profiles</h3>
         <div className="space-y-4">
           {suggestedProfiles.map((profile) => (
             <div key={profile.id} className="flex items-center justify-between">
               <div className="flex items-center">
-                <User className="h-10 w-10 text-gray-400 mr-3" />
+                <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center mr-3">
+                  <Circle className="w-6 h-6 text-white" />
+                </div>
                 <div>
                   <p className="font-semibold">{profile.name}</p>
                   <p className="text-sm text-gray-500">{profile.username}</p>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={() => toast.success(`Followed ${profile.name}`)}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm"
+                className="bg-primary text-white px-4 py-2 rounded-md text-sm"
               >
                 Follow
-              </button>
+              </Button>
             </div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Circle } from 'lucide-react';
 
 const MessagesSidebar: React.FC = () => {
   const contacts = [
@@ -17,7 +18,9 @@ const MessagesSidebar: React.FC = () => {
         <ScrollArea className="h-[calc(100vh-120px)]">
           {contacts.map((contact) => (
             <div key={contact.id} className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
-              <div className="w-10 h-10 bg-blue-500 rounded-full mr-3"></div>
+              <div className="w-10 h-10 bg-accent rounded-full mr-3 flex items-center justify-center">
+                <Circle className="w-6 h-6 text-white" />
+              </div>
               <div>
                 <h3 className="font-semibold">{contact.name}</h3>
                 <p className="text-sm text-gray-500">{contact.lastMessage}</p>
