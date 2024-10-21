@@ -6,6 +6,7 @@ import Explore from '../components/Explore';
 import Notifications from '../components/Notifications';
 import Updates from '../components/Updates';
 import SearchPosting from '../components/SearchPosting';
+import { MessageCircle, Bell, Compass } from 'lucide-react';
 
 const Home: React.FC = () => {
   return (
@@ -22,9 +23,9 @@ const Home: React.FC = () => {
         </div>
         <div>
           <div className="flex justify-around mb-8">
-            <CircularIcon icon="message-circle" label="Messages" />
-            <CircularIcon icon="bell" label="Notifications" />
-            <CircularIcon icon="compass" label="Explore" />
+            <CircularIcon icon={MessageCircle} label="Messages" />
+            <CircularIcon icon={Bell} label="Notifications" />
+            <CircularIcon icon={Compass} label="Explore" />
           </div>
           <Messages />
           <Explore />
@@ -35,8 +36,7 @@ const Home: React.FC = () => {
   );
 };
 
-const CircularIcon: React.FC<{ icon: string; label: string }> = ({ icon, label }) => {
-  const Icon = require('lucide-react')[icon];
+const CircularIcon: React.FC<{ icon: React.ElementType; label: string }> = ({ icon: Icon, label }) => {
   return (
     <div className="flex flex-col items-center">
       <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center mb-2">
