@@ -15,6 +15,8 @@ import FollowersList from './components/FollowersList';
 import StoriesPage from './pages/StoriesPage';
 import MessagesPage from './pages/MessagesPage';
 import NotificationsPage from './pages/NotificationsPage';
+import UpdatesPage from './pages/UpdatesPage';
+import ExplorePage from './pages/ExplorePage';
 
 const App: React.FC = () => {
   return (
@@ -36,6 +38,8 @@ const App: React.FC = () => {
               <Route path="/stories" element={<StoriesPage />} />
               <Route path="/messages" element={<MessagesPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/updates" element={<UpdatesPage />} />
+              <Route path="/explore" element={<ExplorePage />} />
             </Route>
           </Routes>
         </main>
