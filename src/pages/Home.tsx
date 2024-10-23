@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Feed from '../components/Feed';
-import Stories from '../components/Stories';
-import { MessageCircle, Bell, Compass, BookOpen, Film, Home as HomeIcon } from 'lucide-react';
+import Messages from '../components/Messages';
+import Explore from '../components/Explore';
+import Notifications from '../components/Notifications';
+import Updates from '../components/Updates';
+import { MessageCircle, Bell, Compass, BookOpen, Film } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { toast } from 'sonner'
 
@@ -15,51 +18,44 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white min-h-screen">
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
-        <h1 className="text-xl font-semibold text-pink-500">Instagram</h1>
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" onClick={() => handleNavigation('/notifications')}>
-            <Bell className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleNavigation('/messages')}>
-            <MessageCircle className="h-5 w-5" />
-          </Button>
+    <div className="container mx-auto px-4 bg-gradient-to-br from-primary to-secondary min-h-screen text-white">
+      <h1 className="text-3xl font-bold text-center mb-8 pt-8">Welcome to Your Feed</h1>
+      <div className="flex justify-around mb-8">
+        <CircularIcon icon={BookOpen} label="Updates" onClick={() => handleNavigation('/updates')} />
+        <CircularIcon icon={Film} label="Story" onClick={() => handleNavigation('/stories')} />
+        <CircularIcon icon={MessageCircle} label="Messages" onClick={() => handleNavigation('/messages')} />
+        <CircularIcon icon={Bell} label="Notifications" onClick={() => handleNavigation('/notifications')} />
+        <CircularIcon icon={Compass} label="Explore" onClick={() => handleNavigation('/explore')} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div>
+          <Updates />
         </div>
-      </div>
-
-      {/* Stories Section */}
-      <div className="border-b pb-4">
-        <Stories />
-      </div>
-
-      {/* Main Feed */}
-      <div className="pb-16">
-        <Feed />
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-3 px-6">
-        <div className="max-w-xl mx-auto flex justify-between items-center">
-          <Button variant="ghost" size="icon" onClick={() => handleNavigation('/')}>
-            <HomeIcon className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleNavigation('/explore')}>
-            <Compass className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full bg-pink-500 text-white hover:bg-pink-600">
-            <Film className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleNavigation('/updates')}>
-            <BookOpen className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleNavigation('/profile')}>
-            <div className="w-6 h-6 rounded-full bg-gray-200"></div>
-          </Button>
+        <div>
+          <Feed />
+        </div>
+        <div>
+          <Messages />
+          <Explore />
+          <Notifications />
         </div>
       </div>
     </div>
+  );
+};
+
+const CircularIcon: React.FC<{ icon: React.ElementType; label: string; onClick: () => void }> = ({ icon: Icon, label, onClick }) => {
+  return (
+    <Button
+      variant="ghost"
+      className="flex flex-col items-center p-2 hover:bg-accent rounded-full transition-colors"
+      onClick={onClick}
+    >
+      <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center mb-2">
+        <Icon className="w-8 h-8 text-white" />
+      </div>
+      <span className="text-sm">{label}</span>
+    </Button>
   );
 };
 
