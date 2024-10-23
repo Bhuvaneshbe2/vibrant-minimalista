@@ -1,13 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home as HomeIcon, Search, PlusCircle, Heart, User } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { toast } from 'sonner'
 import Feed from '../components/Feed';
 import Messages from '../components/Messages';
 import Explore from '../components/Explore';
 import Notifications from '../components/Notifications';
 import Updates from '../components/Updates';
-import { MessageCircle, Bell, Compass, BookOpen, Film } from 'lucide-react';
-import { Button } from "@/components/ui/button"
-import { toast } from 'sonner'
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -17,45 +18,64 @@ const Home: React.FC = () => {
     toast.success(`Navigated to ${route.slice(1)}`);
   };
 
+  const stories = [
+    { id: 1, name: 'Your Story', image: 'https://github.com/shadcn.png' },
+    { id: 2, name: 'John', image: 'https://github.com/shadcn.png' },
+    { id: 3, name: 'Sarah', image: 'https://github.com/shadcn.png' },
+    { id: 4, name: 'Mike', image: 'https://github.com/shadcn.png' },
+    { id: 5, name: 'Lisa', image: 'https://github.com/shadcn.png' },
+  ];
+
   return (
-    <div className="container mx-auto px-4 bg-gradient-to-br from-primary to-secondary min-h-screen text-white">
-      <h1 className="text-3xl font-bold text-center mb-8 pt-8">Welcome to Your Feed</h1>
-      <div className="flex justify-around mb-8">
-        <CircularIcon icon={BookOpen} label="Updates" onClick={() => handleNavigation('/updates')} />
-        <CircularIcon icon={Film} label="Story" onClick={() => handleNavigation('/stories')} />
-        <CircularIcon icon={MessageCircle} label="Messages" onClick={() => handleNavigation('/messages')} />
-        <CircularIcon icon={Bell} label="Notifications" onClick={() => handleNavigation('/notifications')} />
-        <CircularIcon icon={Compass} label="Explore" onClick={() => handleNavigation('/explore')} />
+    <div className="max-w-xl mx-auto bg-white min-h-screen">
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center p-4 border-b">
+        <h1 className="text-xl font-semibold italic">Instagram</h1>
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" size="icon">
+            <Heart className="h-6 w-6" />
+          </Button>
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div>
-          <Updates />
+
+      {/* Stories */}
+      <div className="p-4 border-b">
+        <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
+          {stories.map((story) => (
+            <div key={story.id} className="flex flex-col items-center space-y-1">
+              <div className="rounded-full p-1 bg-gradient-to-tr from-yellow-400 to-pink-600">
+                <Avatar className="w-16 h-16 border-2 border-white">
+                  <AvatarImage src={story.image} alt={story.name} />
+                  <AvatarFallback>{story.name[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <span className="text-xs">{story.name}</span>
+            </div>
+          ))}
         </div>
-        <div>
-          <Feed />
-        </div>
-        <div>
-          <Messages />
-          <Explore />
-          <Notifications />
-        </div>
+      </div>
+
+      {/* Feed */}
+      <div className="pb-16">
+        <Feed />
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center p-3 max-w-xl mx-auto">
+        <Button variant="ghost" size="icon" onClick={() => handleNavigation('/')}>
+          <HomeIcon className="h-6 w-6" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => handleNavigation('/explore')}>
+          <Search className="h-6 w-6" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => handleNavigation('/post')}>
+          <PlusCircle className="h-6 w-6" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => handleNavigation('/profile')}>
+          <User className="h-6 w-6" />
+        </Button>
       </div>
     </div>
-  );
-};
-
-const CircularIcon: React.FC<{ icon: React.ElementType; label: string; onClick: () => void }> = ({ icon: Icon, label, onClick }) => {
-  return (
-    <Button
-      variant="ghost"
-      className="flex flex-col items-center p-2 hover:bg-accent rounded-full transition-colors"
-      onClick={onClick}
-    >
-      <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center mb-2">
-        <Icon className="w-8 h-8 text-white" />
-      </div>
-      <span className="text-sm">{label}</span>
-    </Button>
   );
 };
 
