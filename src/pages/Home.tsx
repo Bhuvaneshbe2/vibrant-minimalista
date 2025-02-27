@@ -30,7 +30,7 @@ const Home: React.FC = () => {
     <div className="max-w-xl mx-auto bg-white min-h-screen">
       {/* Top Navigation */}
       <div className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-xl font-semibold italic">Instagram</h1>
+        <h1 className="text-xl font-semibold italic">Logo</h1>
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="icon">
             <Heart className="h-6 w-6" />
