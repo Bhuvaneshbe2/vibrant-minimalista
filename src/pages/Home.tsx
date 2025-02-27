@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home as HomeIcon, Search, PlusCircle, Heart, User } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from 'sonner'
 import Feed from '../components/Feed';
 import MediaUpload from '../components/MediaUpload';
+import Stories from '../components/Stories';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -15,14 +16,6 @@ const Home: React.FC = () => {
     navigate(route);
     toast.success(`Navigated to ${route.slice(1)}`);
   };
-
-  const stories = [
-    { id: 1, name: 'Your Story', image: 'https://github.com/shadcn.png' },
-    { id: 2, name: 'John', image: 'https://github.com/shadcn.png' },
-    { id: 3, name: 'Sarah', image: 'https://github.com/shadcn.png' },
-    { id: 4, name: 'Mike', image: 'https://github.com/shadcn.png' },
-    { id: 5, name: 'Lisa', image: 'https://github.com/shadcn.png' },
-  ];
 
   return (
     <div className="max-w-xl mx-auto bg-white min-h-screen">
@@ -38,19 +31,7 @@ const Home: React.FC = () => {
 
       {/* Stories */}
       <div className="p-4 border-b">
-        <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
-          {stories.map((story) => (
-            <div key={story.id} className="flex flex-col items-center space-y-1">
-              <div className="rounded-full p-1 bg-gradient-to-tr from-yellow-400 to-pink-600">
-                <Avatar className="w-16 h-16 border-2 border-white">
-                  <AvatarImage src={story.image} alt={story.name} />
-                  <AvatarFallback>{story.name[0]}</AvatarFallback>
-                </Avatar>
-              </div>
-              <span className="text-xs">{story.name}</span>
-            </div>
-          ))}
-        </div>
+        <Stories />
       </div>
 
       {/* Media Upload */}
