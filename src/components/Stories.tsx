@@ -1,8 +1,9 @@
 
 import React, { useState, useRef } from 'react';
-import { Camera, Image, Smile, Clock, X } from 'lucide-react';
+import { Camera, Image, Smile, Clock, X, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 interface Story {
   id: string;
@@ -66,7 +67,6 @@ const Stories: React.FC = () => {
     setStories(updatedStories);
   };
 
-  // Check for expired stories every minute
   React.useEffect(() => {
     const interval = setInterval(removeExpiredStories, 60000);
     return () => clearInterval(interval);
@@ -80,74 +80,87 @@ const Stories: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Stories</h2>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileSelect}
-          accept="image/*,video/*"
-          className="hidden"
-        />
-        <Button
-          onClick={() => fileInputRef.current?.click()}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center"
-        >
-          <Camera className="mr-2 h-5 w-5" />
-          Add Story
-        </Button>
-      </div>
-
-      {selectedMedia && (
-        <div className="mb-4 relative">
-          {selectedMedia.file.type.startsWith('image/') ? (
-            <img
-              src={selectedMedia.preview}
-              alt="Preview"
-              className="w-full h-64 object-cover rounded-lg"
-            />
-          ) : (
-            <video
-              src={selectedMedia.preview}
-              controls
-              className="w-full h-64 object-cover rounded-lg"
-            />
-          )}
-          <Button
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2"
-            onClick={clearSelection}
+    <div className="max-w-2xl mx-auto">
+      <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+        {/* Add Story Button */}
+        <div className="flex flex-col items-center space-y-1">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/*,video/*"
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-16 h-16 rounded-full flex items-center justify-center bg-gray-100 border-2 border-dashed border-gray-300 hover:bg-gray-200 transition-colors"
           >
-            <X className="h-4 w-4" />
-          </Button>
-          <Button
-            onClick={addStory}
-            className="mt-2 w-full"
-          >
-            Post Story
-          </Button>
+            <Plus className="h-6 w-6 text-gray-600" />
+          </button>
+          <span className="text-xs text-gray-600">Add Story</span>
         </div>
-      )}
 
-      <div className="grid grid-cols-4 gap-4">
+        {/* Stories List */}
         {stories.map((story) => (
-          <div key={story.id} className="bg-white p-4 rounded-lg shadow-md">
-            {story.type === 'photo' ? (
-              <img src={story.content} alt="Story" className="w-full h-32 object-cover rounded-md" />
-            ) : (
-              <video src={story.content} className="w-full h-32 object-cover rounded-md" controls />
-            )}
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500">
-                {story.timestamp.toLocaleString()}
-              </span>
-              <Clock className="h-4 w-4 text-gray-500" />
+          <div key={story.id} className="flex flex-col items-center space-y-1">
+            <div className="rounded-full p-1 bg-gradient-to-tr from-yellow-400 to-fuchsia-600">
+              <div className="rounded-full border-2 border-white overflow-hidden w-16 h-16">
+                {story.type === 'photo' ? (
+                  <img 
+                    src={story.content} 
+                    alt="Story" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <video 
+                    src={story.content} 
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
             </div>
+            <span className="text-xs">
+              {new Date(story.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
           </div>
         ))}
       </div>
+
+      {/* Media Preview and Post UI */}
+      {selectedMedia && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-lg w-full p-4">
+            {selectedMedia.file.type.startsWith('image/') ? (
+              <img
+                src={selectedMedia.preview}
+                alt="Preview"
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            ) : (
+              <video
+                src={selectedMedia.preview}
+                controls
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            )}
+            <div className="flex gap-2 mt-4">
+              <Button
+                variant="destructive"
+                onClick={clearSelection}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={addStory}
+                className="flex-1"
+              >
+                Post Story
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
