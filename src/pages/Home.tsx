@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home as HomeIcon, Search, PlusCircle, Heart, User } from 'lucide-react';
@@ -5,10 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { toast } from 'sonner'
 import Feed from '../components/Feed';
-import Messages from '../components/Messages';
-import Explore from '../components/Explore';
-import Notifications from '../components/Notifications';
-import Updates from '../components/Updates';
+import MediaUpload from '../components/MediaUpload';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -53,6 +51,11 @@ const Home: React.FC = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Media Upload */}
+      <div className="p-4">
+        <MediaUpload />
       </div>
 
       {/* Feed */}

@@ -1,48 +1,55 @@
+
 import React, { useState, useRef } from 'react';
-import { Upload, Scissors, Image as ImageIcon, Send } from 'lucide-react';
+import { Upload, ImageIcon, X } from 'lucide-react';
+import { Button } from "@/components/ui/button"
 import { toast } from 'sonner';
 
+interface MediaFile {
+  file: File;
+  preview: string;
+}
+
 const MediaUpload: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>('none');
+  const [selectedMedia, setSelectedMedia] = useState<MediaFile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setSelectedMedia({
+            file,
+            preview: reader.result as string
+          });
+        };
+        reader.readAsDataURL(file);
+        toast.success('Media selected successfully');
+      } else {
+        toast.error('Please select an image or video file');
+      }
     }
   };
 
   const handleUpload = () => {
-    if (selectedFile) {
+    if (selectedMedia) {
       // Here you would typically send the file to your server
-      toast.success(`Uploaded ${selectedFile.name} with filter: ${filter}`);
-      setSelectedFile(null);
-      setPreview(null);
-      setFilter('none');
+      toast.success(`Uploaded ${selectedMedia.file.name}`);
+      setSelectedMedia(null);
     }
   };
 
-  const filters = ['none', 'grayscale', 'sepia', 'invert'];
+  const clearSelection = () => {
+    setSelectedMedia(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Upload Media</h2>
-      <div className="mb-4">
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center"
-        >
-          <Upload className="mr-2 h-5 w-5" />
-          Select File
-        </button>
+    <div className="p-4 bg-white rounded-lg shadow-sm">
+      <div className="flex flex-col items-center gap-4">
         <input
           type="file"
           ref={fileInputRef}
@@ -50,50 +57,51 @@ const MediaUpload: React.FC = () => {
           accept="image/*,video/*"
           className="hidden"
         />
+        
+        {selectedMedia ? (
+          <div className="relative w-full">
+            {selectedMedia.file.type.startsWith('image/') ? (
+              <img
+                src={selectedMedia.preview}
+                alt="Preview"
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            ) : (
+              <video
+                src={selectedMedia.preview}
+                controls
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            )}
+            <Button
+              variant="destructive"
+              size="icon"
+              className="absolute top-2 right-2"
+              onClick={clearSelection}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full h-64 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2"
+          >
+            <ImageIcon className="h-8 w-8 text-gray-400" />
+            <span className="text-sm text-gray-500">Click to select media</span>
+          </Button>
+        )}
+
+        {selectedMedia && (
+          <Button
+            onClick={handleUpload}
+            className="w-full"
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Media
+          </Button>
+        )}
       </div>
-      {preview && (
-        <div className="mb-4">
-          {selectedFile?.type.startsWith('image/') ? (
-            <img
-              src={preview}
-              alt="Preview"
-              className={`max-w-full h-auto ${filter !== 'none' ? `filter-${filter}` : ''}`}
-            />
-          ) : (
-            <video src={preview} controls className="max-w-full h-auto" />
-          )}
-        </div>
-      )}
-      {selectedFile?.type.startsWith('video/') && (
-        <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md mb-4 flex items-center">
-          <Scissors className="mr-2 h-5 w-5" />
-          Trim Video
-        </button>
-      )}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Apply Filter:</label>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md"
-        >
-          {filters.map((f) => (
-            <option key={f} value={f}>
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button
-        onClick={handleUpload}
-        disabled={!selectedFile}
-        className={`w-full bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center justify-center ${
-          !selectedFile ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-      >
-        <Send className="mr-2 h-5 w-5" />
-        Upload
-      </button>
     </div>
   );
 };
