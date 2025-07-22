@@ -63,30 +63,66 @@ const Feed: React.FC = () => {
   };
 
   const renderVideoContent = (content: string) => {
+    // YouTube video handling
     if (content.includes('youtube.com') || content.includes('youtu.be')) {
+      let videoId = '';
+      
+      if (content.includes('youtu.be/')) {
+        videoId = content.split('youtu.be/')[1].split('?')[0];
+      } else if (content.includes('youtube.com/watch?v=')) {
+        videoId = content.split('v=')[1].split('&')[0];
+      } else if (content.includes('youtube.com/shorts/')) {
+        videoId = content.split('shorts/')[1].split('?')[0];
+      }
+      
+      const isShort = content.includes('/shorts/');
+      const height = isShort ? "560" : "315";
+      
       return (
         <iframe
           width="100%"
-          height="315"
-          src={`https://www.youtube.com/embed/${content.split('v=')[1]}`}
+          height={height}
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
+          className="rounded-md"
         ></iframe>
       );
-    } else if (content.includes('instagram.com')) {
+    } 
+    // Instagram video handling
+    else if (content.includes('instagram.com')) {
+      let embedUrl = '';
+      
+      if (content.includes('/p/') || content.includes('/reel/')) {
+        // Remove trailing slash and add embed
+        embedUrl = content.replace(/\/$/, '') + '/embed';
+      } else {
+        embedUrl = content + 'embed';
+      }
+      
       return (
         <iframe
           width="100%"
-          height="315"
-          src={`${content}embed`}
+          height="400"
+          src={embedUrl}
           frameBorder="0"
           allowFullScreen
+          className="rounded-md"
         ></iframe>
       );
-    } else {
+    } 
+    // Regular video files
+    else {
       return (
-        <video src={content} controls className="w-full rounded-md mb-4" />
+        <video 
+          src={content} 
+          controls 
+          autoPlay 
+          muted 
+          loop
+          className="w-full rounded-md mb-4" 
+        />
       );
     }
   };
