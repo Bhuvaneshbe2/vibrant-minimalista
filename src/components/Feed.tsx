@@ -25,9 +25,11 @@ const Feed: React.FC = () => {
     const fetchPosts = () => {
       const mockPosts: Post[] = [
         { id: '1', type: 'photo', content: 'https://picsum.photos/seed/1/400/300', likes: 15, comments: 3, author: 'User1', followers: 100, isFollowed: false },
-        { id: '2', type: 'video', content: 'https://www.example.com/video1.mp4', likes: 25, comments: 7, author: 'User2', followers: 200, isFollowed: false },
+        { id: '2', type: 'video', content: 'https://www.youtube.com/shorts/dQw4w9WgXcQ', likes: 25, comments: 7, author: 'User2', followers: 200, isFollowed: false },
         { id: '3', type: 'story', content: 'This is a story post content', likes: 10, comments: 2, author: 'User3', followers: 150, isFollowed: false },
         { id: '4', type: 'photo', content: 'https://picsum.photos/seed/2/400/300', likes: 30, comments: 5, author: 'User4', followers: 300, isFollowed: false },
+        { id: '5', type: 'video', content: 'https://www.instagram.com/reel/C1234567890', likes: 45, comments: 8, author: 'User5', followers: 250, isFollowed: false },
+        { id: '6', type: 'video', content: 'https://youtu.be/dQw4w9WgXcQ', likes: 35, comments: 6, author: 'User6', followers: 180, isFollowed: false },
       ];
       setPosts(mockPosts);
     };
