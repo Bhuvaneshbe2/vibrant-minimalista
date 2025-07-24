@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Upload, Plus, UserPlus, Phone } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Upload, Plus, UserPlus, Phone, Send, Reply } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -13,11 +13,23 @@ import { Input } from "@/components/ui/input"
 import { Post } from '../types/post';
 import * as postActions from '../utils/postActions';
 
+interface Comment {
+  id: string;
+  postId: string;
+  author: string;
+  content: string;
+  timestamp: string;
+  replies: Comment[];
+}
+
 const Feed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [filter, setFilter] = useState<Post['type'] | 'all'>('all');
   const [comment, setComment] = useState('');
   const [showCommentInput, setShowCommentInput] = useState<string | null>(null);
+  const [showComments, setShowComments] = useState<string | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [replyTo, setReplyTo] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +44,18 @@ const Feed: React.FC = () => {
         { id: '6', type: 'video', content: 'https://youtu.be/dQw4w9WgXcQ', likes: 35, comments: 6, author: 'User6', followers: 180, isFollowed: false },
       ];
       setPosts(mockPosts);
+
+      // Mock comments data
+      const mockComments: Comment[] = [
+        { id: '1', postId: '1', author: 'John Doe', content: 'Great photo!', timestamp: '2 hours ago', replies: [] },
+        { id: '2', postId: '1', author: 'Jane Smith', content: 'Love it!', timestamp: '1 hour ago', replies: [
+          { id: '3', postId: '1', author: 'User1', content: 'Thank you!', timestamp: '45 minutes ago', replies: [] }
+        ]},
+        { id: '4', postId: '2', author: 'Mike Johnson', content: 'Amazing video!', timestamp: '3 hours ago', replies: [] },
+        { id: '5', postId: '2', author: 'Sarah Wilson', content: 'So cool!', timestamp: '2 hours ago', replies: [] },
+        { id: '6', postId: '3', author: 'Tom Brown', content: 'Interesting story', timestamp: '1 hour ago', replies: [] },
+      ];
+      setComments(mockComments);
     };
 
     fetchPosts();
@@ -43,13 +67,75 @@ const Feed: React.FC = () => {
 
   const submitComment = (postId: string) => {
     if (comment.trim()) {
-      setPosts(posts.map(post =>
-        post.id === postId ? { ...post, comments: post.comments + 1 } : post
-      ));
+      const newComment: Comment = {
+        id: Date.now().toString(),
+        postId,
+        author: 'Current User',
+        content: comment,
+        timestamp: 'Just now',
+        replies: []
+      };
+
+      if (replyTo) {
+        setComments(prevComments => 
+          prevComments.map(c => 
+            c.id === replyTo 
+              ? { ...c, replies: [...c.replies, newComment] }
+              : c
+          )
+        );
+        setReplyTo(null);
+      } else {
+        setComments(prevComments => [...prevComments, newComment]);
+        setPosts(posts.map(post =>
+          post.id === postId ? { ...post, comments: post.comments + 1 } : post
+        ));
+      }
+
       toast.success('Comment added successfully!');
       setComment('');
       setShowCommentInput(null);
     }
+  };
+
+  const toggleComments = (postId: string) => {
+    setShowComments(showComments === postId ? null : postId);
+  };
+
+  const startReply = (commentId: string, postId: string) => {
+    setReplyTo(commentId);
+    setShowCommentInput(postId);
+  };
+
+  const renderComment = (comment: Comment, isReply: boolean = false) => (
+    <div key={comment.id} className={`${isReply ? 'ml-8 mt-2' : 'mt-3'} p-3 bg-gray-50 rounded-lg`}>
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <div className="font-semibold text-sm">{comment.author}</div>
+          <div className="text-gray-700 mt-1">{comment.content}</div>
+          <div className="text-xs text-gray-500 mt-1">{comment.timestamp}</div>
+        </div>
+        {!isReply && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => startReply(comment.id, comment.postId)}
+            className="text-xs"
+          >
+            <Reply size={12} className="mr-1" /> Reply
+          </Button>
+        )}
+      </div>
+      {comment.replies.length > 0 && (
+        <div className="mt-2">
+          {comment.replies.map(reply => renderComment(reply, true))}
+        </div>
+      )}
+    </div>
+  );
+
+  const getPostComments = (postId: string) => {
+    return comments.filter(comment => comment.postId === postId);
   };
 
   const handleUploadMedia = () => {
@@ -173,7 +259,7 @@ const Feed: React.FC = () => {
             <Button variant="ghost" onClick={() => postActions.handleLike(posts, post.id, setPosts)} className="flex items-center text-gray-600 hover:text-red-500">
               <Heart size={20} className="mr-1" /> {post.likes}
             </Button>
-            <Button variant="ghost" onClick={() => handleComment(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
+            <Button variant="ghost" onClick={() => toggleComments(post.id)} className="flex items-center text-gray-600 hover:text-blue-500">
               <MessageCircle size={20} className="mr-1" /> {post.comments}
             </Button>
             <DropdownMenu>
@@ -201,16 +287,50 @@ const Feed: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          
+          {/* Comments Section */}
+          {showComments === post.id && (
+            <div className="mt-4 border-t pt-4">
+              <h4 className="font-semibold mb-3">Comments ({getPostComments(post.id).length})</h4>
+              {getPostComments(post.id).length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
+              ) : (
+                getPostComments(post.id).map(comment => renderComment(comment))
+              )}
+              <Button 
+                onClick={() => handleComment(post.id)} 
+                className="mt-3 w-full"
+                variant="outline"
+              >
+                Add Comment
+              </Button>
+            </div>
+          )}
+
           {showCommentInput === post.id && (
-            <div className="mt-4 flex">
-              <Input
-                type="text"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Write your comment..."
-                className="flex-grow mr-2"
-              />
-              <Button onClick={() => submitComment(post.id)}>Submit</Button>
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <div className="flex">
+                <Input
+                  type="text"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder={replyTo ? "Write your reply..." : "Write your comment..."}
+                  className="flex-grow mr-2"
+                />
+                <Button onClick={() => submitComment(post.id)}>
+                  <Send size={16} />
+                </Button>
+              </div>
+              {replyTo && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setReplyTo(null)}
+                  className="mt-2 text-xs"
+                >
+                  Cancel Reply
+                </Button>
+              )}
             </div>
           )}
         </div>
